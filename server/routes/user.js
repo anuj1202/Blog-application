@@ -7,34 +7,39 @@ const bcrypt = require("bcrypt")
 
 router.put("/:id", async (req, res) => {
   if (req.body.userId === req.params.id) {
-    if (req.body.password) {
-      const salt = await bcrypt.genSalt(10)
-      req.body.password = await bcrypt.hash(req.body.password, salt)
-    }
     try {
-      const oldUsername = User.username;
-      const updatedUser = await User.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: User.username,
-        },
-        { new: true }
-      );
-      // Update username in all posts created by the user
-      await Post.updateMany(
-        { username: oldUsername  },
-        { $set: {username: User.username} }
-      );
+      // Find the user by ID
+      const user = await User.findById(req.params.id);
+      if (!user) {
+        return res.status(404).json("User not found");
+      }
+
+      // Update fields if provided in the request body
+      if (req.body.profilePic) {
+        user.profilePic= req.body.profilePic;
+      }
+      if (req.body.email) {
+        user.email = req.body.email;
+      }
+      if (req.body.password) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(req.body.password, salt);
+      }
+
+      // Save the updated user object
+      const updatedUser = await user.save();
+
       console.log(updatedUser.username);
       console.log("user");
-      res.status(200).json(updatedUser)
+      res.status(200).json(updatedUser);
     } catch (error) {
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   } else {
-    res.status(401).json("You can update your account")
+    res.status(401).json("You can update your account");
   }
-})
+});
+
 
 /* 
 {

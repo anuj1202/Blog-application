@@ -24,13 +24,24 @@ router.put("/:id", async (req, res) => {
     const post = await Post.findById(req.params.id)
     if (post.username === req.body.username) {
       try {
-        const updatePost = await Post.findByIdAndUpdate(
-          req.params.id,
-          {
-            $set: req.body,
-          },
-          { new: true }
-        )
+        // const updatePost = await Post.findByIdAndUpdate(
+        //   req.params.id,
+        //   {
+        //     $set: req.body,
+        //   },
+        //   { new: true }
+        // )
+        // res.status(200).json(updatePost)
+        if (req.body.profilePic) {
+          post.photo= req.body.photo;
+        }
+        if(req.body.title){
+          post.title= req.body.title;
+        }
+        if(req.body.desc){
+          post.desc=req.body.desc;
+        }
+        const updatePost= await post.save();
         res.status(200).json(updatePost)
       } catch (error) {
         res.status(500).json(error)

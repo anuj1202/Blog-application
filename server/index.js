@@ -13,6 +13,7 @@ const authRoute = require("./routes/auth")
 const authUser = require("./routes/user")
 const authPost = require("./routes/posts")
 const authCat = require("./routes/categories")
+const authContact = require("./routes/contact")
 
 //---- step : 1
 dotenv.config()
@@ -52,6 +53,7 @@ app.use("/auth", authRoute)
 app.use("/users", authUser)
 app.use("/posts", authPost)
 app.use("/category", authCat)
+app.use("/query", authContact)
 
 //---- step : 1.2
 app.listen("5000", () => {
